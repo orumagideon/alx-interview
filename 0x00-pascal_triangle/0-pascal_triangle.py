@@ -1,34 +1,33 @@
+#!/usr/bin/python3
+"""Pascal's Triangle"""
+
+
 def pascal_triangle(n):
     """
-    Generate Pascal's Triangle of size n.
-
-    Args:
-        n (int): Size of the Pascal's Triangle.
-
-    Returns:
-        list of lists of integers: Pascal's Triangle of size n.
+    function returns list
+    of integers representing the
+    pascal triangle of n:
+       . It returns an empty list if n <= 0
+       . Assume n will be always be integer
     """
+    pascal_tri = []
+
     if n <= 0:
         return []
 
-    triangle = [[1]]
+    for i in range(n):
+        if (i == 0):
+            pascal_tri.append([1])
+        else:
+            cur_row = []
+            for j in range(i + 1):
+                if (j == 0 or j == i):
+                    cur_row.append(1)
+                else:
+                    cur_row.append(pascal_tri[i - 1][j - 1] +
+                                   pascal_tri[i - 1][j])
 
-    for i in range(1, n):
-        row = [1]
-        for j in range(1, i):
-            row.append(triangle[i-1][j-1] + triangle[i-1][j])
-        row.append(1)
-        triangle.append(row)
+            pascal_tri.append(cur_row)
 
-    return triangle
+    return (pascal_tri)
 
-# Example usage:
-if __name__ == "__main__":
-    def print_triangle(triangle):
-        """
-        Print the triangle
-        """
-        for row in triangle:
-            print("[{}]".format(",".join([str(x) for x in row])))
-
-    print_triangle(pascal_triangle(5))
