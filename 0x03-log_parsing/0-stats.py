@@ -3,8 +3,10 @@
 Script: Reads lines from standard input and calculates statistics
 """
 
+import sys
+from collections import defaultdict
 
-def parseLogs():
+def parse_logs():
     """
     Reads logs from standard input and produces reports
     Reports:
@@ -12,44 +14,37 @@ def parseLogs():
     Raises:
         KeyboardInterrupt (Exception): handles and re-raises this exception
     """
-    stdin = __import__('sys').stdin
-    lineNumber = 0
-    fileSize = 0
-    statusCodes = {}
+    line_number = 0
+    file_size = 0
+    status_codes = defaultdict(int)
     codes = ('200', '301', '400', '401', '403', '404', '405', '500')
     try:
-        for line in stdin:
-            lineNumber += 1
+        for line in sys.stdin:
+            line_number += 1
             line = line.split()
             try:
-                fileSize += int(line[-1])
+                file_size += int(line[-1])
                 if line[-2] in codes:
-                    try:
-                        statusCodes[line[-2]] += 1
-                    except KeyError:
-                        statusCodes[line[-2]] = 1
+                    status_codes[line[-2]] += 1
             except (IndexError, ValueError):
                 pass
-            if lineNumber == 10:
-                report(fileSize, statusCodes)
-                lineNumber = 0
-        report(fileSize, statusCodes)
-    except KeyboardInterrupt as e:
-        report(fileSize, statusCodes)
+            if line_number % 10 == 0:
+                report(file_size, status_codes)
+        report(file_size, status_codes)
+    except KeyboardInterrupt:
+        report(file_size, status_codes)
         raise
 
-
-def report(fileSize, statusCodes):
+def report(file_size, status_codes):
     """
     Prints the generated report to standard output
     Args:
-        fileSize (int): total log size after every successful processing of 10 lines
-        statusCodes (dict): dictionary containing status codes and their counts
+        file_size (int): total log size after every successful processing of 10 lines
+        status_codes (dict): dictionary containing status codes and their counts
     """
-    print("File size: {}".format(fileSize))
-    for key, value in sorted(statusCodes.items()):
-        print("{}: {}".format(key, value))
-
+    print(f"File size: {file_size}")
+    for key, value in sorted(status_codes.items()):
+        print(f"{key}: {value}")
 
 if __name__ == '__main__':
-    parseLogs()
+    parse_logs()
