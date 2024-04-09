@@ -2,64 +2,64 @@
 """
 Solution to the nqueens problem
 """
-def backtrack(r, n, cols, pos, neg, board):
+import sys
+
+
+def backtrack(row, n, cols, pos_diagonal, neg_diagonal, board):
     """
-    backtrack function to find solution
+    Backtrack function to find solutions to the N-queens problem
     """
-    if r == n:
+    if row == n:
         res = []
-        for l in range(len(board)):
-            for k in range(len(board[l])):
-                if board[l][k] == 1:
-                    res.append([l, k])
+        for r in range(len(board)):
+            for c in range(len(board[r])):
+                if board[r][c] == 1:
+                    res.append([r, c])
         print(res)
         return
 
-    for c in range(n):
-        if c in cols or (r + c) in pos or (r - c) in neg:
+    for col in range(n):
+        if col in cols or (row + col) in pos_diagonal or (row - col) in neg_diagonal:
             continue
 
-        cols.add(c)
-        pos.add(r + c)
-        neg.add(r - c)
-        board[r][c] = 1
+        cols.add(col)
+        pos_diagonal.add(row + col)
+        neg_diagonal.add(row - col)
+        board[row][col] = 1
 
-        backtrack(r+1, n, cols, pos, neg, board)
+        backtrack(row + 1, n, cols, pos_diagonal, neg_diagonal, board)
 
-        cols.remove(c)
-        pos.remove(r + c)
-        neg.remove(r - c)
-        board[r][c] = 0
+        cols.remove(col)
+        pos_diagonal.remove(row + col)
+        neg_diagonal.remove(row - col)
+        board[row][col] = 0
 
 
 def nqueens(n):
     """
-    Solution to nqueens problem
+    Solves the N-queens problem for a given board size n
     Args:
-        n (int): number of queens. Must be >= 4
-    Return:
-        List of lists representing coordinates of each
-        queen for all possible solutions
+        n (int): Size of the chessboard and number of queens
     """
     cols = set()
-    pos_diag = set()
-    neg_diag = set()
-    board = [[0] * n for i in range(n)]
+    pos_diagonal = set()
+    neg_diagonal = set()
+    board = [[0] * n for _ in range(n)]
 
-    backtrack(0, n, cols, pos_diag, neg_diag, board)
+    backtrack(0, n, cols, pos_diagonal, neg_diagonal, board)
 
 
 if __name__ == "__main__":
-    n = sys.argv
-    if len(n) != 2:
+    args = sys.argv
+    if len(args) != 2:
         print("Usage: nqueens N")
         sys.exit(1)
     try:
-        nn = int(n[1])
-        if nn < 4:
+        n_value = int(args[1])
+        if n_value < 4:
             print("N must be at least 4")
             sys.exit(1)
-        nqueens(nn)
+        nqueens(n_value)
     except ValueError:
         print("N must be a number")
         sys.exit(1)
