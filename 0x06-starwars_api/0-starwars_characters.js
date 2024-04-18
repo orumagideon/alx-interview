@@ -2,27 +2,26 @@
 
 const request = require('request');
 
-function getCharacterName(url) {
-  request(url, function(error, response, body) {
-    if (!error && response.statusCode == 200) {
-      const json = JSON.parse(body);
-      console.log(json.name);
+const req = (arr, i) => {
+  if (i === arr.length) return;
+  request(arr[i], (err, response, body) => {
+    if (err) {
+      throw err;
+    } else {
+      console.log(JSON.parse(body).name);
+      req(arr, i + 1);
     }
   });
-}
+};
 
-function getCharacters(movieId) {
-  const url = `https://swapi.dev/api/films/${movieId}/`;
-  request(url, function(error, response, body) {
-    if (!error && response.statusCode == 200) {
-      const json = JSON.parse(body);
-      for (let i = 0; i < json.characters.length; i++) {
-        getCharacterName(json.characters[i]);
-      }
+request(
+  `https://swapi-api.hbtn.io/api/films/${process.argv[2]}`,
+  (err, response, body) => {
+    if (err) {
+      throw err;
+    } else {
+      const chars = JSON.parse(body).characters;
+      req(chars, 0);
     }
-  });
-}
-
-const movieId = process.argv[2];
-getCharacters(movieId);
-
+  }
+);
